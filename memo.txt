@@ -1,0 +1,7 @@
+
+■コマンド実行系
+pip3 install requests --user
+pip3 install python-dotenv --user .env系
+
+■注意
+インデント気をつける

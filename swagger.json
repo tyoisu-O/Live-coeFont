@@ -1,0 +1,892 @@
+{
+  "openapi": "3.0.2",
+  "servers": [
+    {
+      "url": "https://api.coefont.cloud/v1"
+    }
+  ],
+  "info": {
+    "version": "1.2.0",
+    "title": "CoeFont API",
+    "termsOfService": "https://coefont.cloud/termsOfUse",
+    "x-logo": {
+      "url": "https://docs.coefont.cloud/logo.svg",
+      "altText": "CoeFont Logo"
+    },
+    "description": "CoeFontのREST APIです。  \nアクセスキー及びアクセスシークレットは各ユーザーのユーザーページから取得してください。   \n\n**アクセスキーを発行したアカウントのポイントが消費されます。ご注意ください。**  \n**また、使用ポイントが1文字あたり5ポイント未満のCoeFont(無料期間中のAveruni等)に関しても、API利用の際は5pt消費されます。**\n# 認証方式\n  CoefontAPIの利用時にはHMAC-SHA256を用いて署名する必要があります。  \n  以下の仕様に基づいて適切にヘッダーを設定してください。  \n\n| ヘッダー       | 詳細                |\n| -------------- | ------------------- |\n| X-Coefont-Date | UNIX時間 (UTC) |\n| X-Coefont-Content  | アクセスシークレットを用いて以下のデータをHMAC-SHA256でハッシュ化した結果をhex形式で表した文字列<br> - UNIX時間(UTC)<br>-  リクエストボディ |\n| Authorization | アクセスキー |\n| Content-Type | application/json |\n\n### ハッシュ化について\nデータのハッシュ化については次のようなフローで行います。\n1. リクエストボディをjson形式にエンコードする。\n1. UNIX時間(UTC)とjsonエンコードされたリクエストボディをこの順で結合する。  \n1. 以上のデータをアクセスシークレットを用いてHMAC-SHA256でハッシュ化する。  \n  **リクエストボディが存在しない場合は現在時刻のみをハッシュ化します。**\n\n\n### pythonでの実装例(/text2speech)\n```python\n  import hmac\n  import requests\n  import hashlib\n  import json\n  from datetime import datetime, timezone\n\n  accesskey = 'QY4Tuiug6XidAKjDS5zTQHGSI'\n  access_secret = '62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR'\n\n  text = 'これはテストです。'\n  date: str = str(int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp()))\n  data: str = json.dumps({\n    'coefont': '2b174967-1a8a-42e4-b1ae-5f6548cfa05d',\n    'text': text\n  })\n  signature = hmac.new(bytes(access_secret, 'utf-8'), (date+data).encode('utf-8'), hashlib.sha256).hexdigest()\n\n  response = requests.post('https://api.coefont.cloud/v1/text2speech', data=data, headers={\n    'Content-Type': 'application/json',\n    'Authorization': accesskey,\n    'X-Coefont-Date': date,\n    'X-Coefont-Content': signature\n  })\n\n  if response.status_code == 200:\n    with open('response.wav', 'wb') as f:\n      f.write(response.content)\n  else:\n    print(response.json())\n```\n"
+  },
+  "paths": {
+    "/text2speech": {
+      "post": {
+        "tags": [
+          "Text2speech"
+        ],
+        "summary": "POST /text2speech",
+        "description": "テキストを合成音声に変換します。",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Content-Type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "アクセスキー",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Date",
+            "in": "header",
+            "description": "UNIX時間(UTC)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Content",
+            "in": "header",
+            "description": "アクセスシークレットを用いて署名した文字列",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Text",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PostText2SpeechRequest"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "format": {
+                        "type": "string",
+                        "description": "音声ファイルのフォーマット",
+                        "enum": [
+                          "wav",
+                          "mp3"
+                        ],
+                        "example": "wav"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "python",
+            "source": "import hmac\nimport requests\nimport hashlib\nimport json\nfrom datetime import datetime, timezone\n\naccesskey = 'QY4Tuiug6XidAKjDS5zTQHGSI'\naccess_secret = '62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR'\n\ntext = 'これはテストです。'\ndate: str = str(int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp()))\ndata: str = json.dumps({\n  'coefont': '2b174967-1a8a-42e4-b1ae-5f6548cfa05d',\n  'text': text\n})\nsignature = hmac.new(bytes(access_secret, 'utf-8'), (date+data).encode('utf-8'), hashlib.sha256).hexdigest()\n\nresponse = requests.post('https://api.coefont.cloud/v1/text2speech', data=data, headers={\n  'Content-Type': 'application/json',\n  'Authorization': accesskey,\n  'X-Coefont-Date': date,\n  'X-Coefont-Content': signature\n})\n\nif response.status_code == 200:\n  with open('response.wav', 'wb') as f:\n    f.write(response.content)\nelse:\n  print(response.json())\n"
+          },
+          {
+            "lang": "nodejs",
+            "source": "const axios = require('axios')\nconst crypto = require('crypto')\nconst fs = require('fs')\n\nconst accessKey = 'QY4Tuiug6XidAKjDS5zTQHGSI'\nconst accessSecret = '62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR'\nconst text = 'これはテストです。'\nconst data = JSON.stringify({\n  'coefont': '2b174967-1a8a-42e4-b1ae-5f6548cfa05d',\n  'text': text\n})\nconst date = String(Math.floor(Date.now() / 1000))\nconst signature = crypto.createHmac('sha256', accessSecret).update(date+data).digest('hex')\n\naxios.post('https://api.coefont.cloud/v1/text2speech', data, {\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': accessKey,\n      'X-Coefont-Date': date,\n      'X-Coefont-Content': signature\n    },\n    responseType: 'stream'\n  })\n  .then(response => {\n    response.data.pipe(fs.createWriteStream('response.wav'))\n  })\n  .catch(error => {\n    console.log(error)\n  })\n"
+          },
+          {
+            "lang": "Go",
+            "source": "package main\nimport (\n  \"bytes\"\n  \"crypto/hmac\"\n  \"crypto/sha256\"\n  \"encoding/hex\"\n  \"encoding/json\"\n  \"fmt\"\n  \"net/http\"\n  \"os\"\n  \"strconv\"\n  \"time\"\n)\n\ntype text2SpeechReq struct {\n  CoefontID string `json:\"coefont,omitempty\"`\n  Text      string `json:\"text,omitempty\"`\n}\n\nconst (\n  accessKey = \"QY4Tuiug6XidAKjDS5zTQHGSI\"\n  secret    = \"62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR\"\n)\n\nfunc main() {\tj, err := json.Marshal(text2SpeechReq{\n    CoefontID: \"2b174967-1a8a-42e4-b1ae-5f6548cfa05d\",\n    Text:      \"これはテストです。\",\n  })\n  if err != nil {\n    panic(err)\n  }\n  t := strconv.FormatInt(time.Now().Unix(), 10)\n  sign := CalcHMACSHA256(t+string(j), secret)\n  fmt.Println(t + string(j))\n  fmt.Println(t)\n  fmt.Println(sign)\n  \n  client := &http.Client{\n    CheckRedirect: func(req *http.Request, via []*http.Request) error {\n      return http.ErrUseLastResponse\n    },\n  }\n\n  req, err := http.NewRequest(\"POST\", \"https://api.coefont.cloud/v1/text2speech\", bytes.NewBuffer(j))\n  if err != nil {\n    panic(err)\n  }\n  req.Header.Set(\"Content-Type\", \"application/json\")\n  req.Header.Set(\"X-Coefont-Content\", sign)\n  req.Header.Set(\"X-Coefont-Date\", t)\n  req.Header.Set(\"Authorization\", accessKey)\n  resp, err := client.Do(req)\n  if err != nil {\n    panic(err)\n  }\n  defer resp.Body.Close()\n  buf := new(bytes.Buffer)\n  _, err = buf.ReadFrom(resp.Body)\n  if err != nil {\n    panic(err)\n  }\n  newStr := buf.String()\n  fmt.Println(resp.Status)\n  fmt.Println(newStr)\n\n  resp, err = http.Get(resp.Header.Get(\"Location\"))\n  if err != nil {\n    panic(err)\n  }\n  f, err := os.Create(\"test.wav\")\n  if err != nil {\n    panic(err)\n  }\n  defer f.Close()\n  _, err = buf.ReadFrom(resp.Body)\n  if err != nil {\n    panic(err)\n  }\n  _, err = f.Write(buf.Bytes())\n  if err != nil {\n    panic(err)\n  }\n}\n\nfunc CalcHMACSHA256(message, secret string) string {\n  mac := hmac.New(sha256.New, []byte(secret))\n  _, _ = mac.Write([]byte(message))\n  return hex.EncodeToString(mac.Sum(nil))\n}\n"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "合成された音声ファイルへリダイレクトされます。リダイレクト先でバイナリ化した音声ファイルが返却されます。リダイレクトURLの期限は7日間です。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "object",
+                  "example": null
+                },
+                "description": "生成された音声ファイルのURL"
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストの形式が違う、または禁止ワードが含まれています。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ヘッダー情報が間違っている，ポイント残高が不足しているなどの理由で認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "コエフォントへのアクセス権が存在しません。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "指定したコエフォントが存在しません。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "声の生成に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/text2speech/batch": {
+      "post": {
+        "tags": [
+          "Text2speech"
+        ],
+        "summary": "POST /text2speech/batch",
+        "description": "テキストをまとめて合成音声に変換します。合計文字数を1000文字程度以内にしてください。",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Content-Type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "アクセスキー",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Date",
+            "in": "header",
+            "description": "UNIX時間(UTC)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Content",
+            "in": "header",
+            "description": "アクセスシークレットを用いて署名した文字列",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Text",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "$ref": "#/components/schemas/PostText2SpeechBatchRequest"
+              }
+            }
+          }
+        },
+        "x-codeSamples": [
+          {
+            "lang": "python",
+            "source": "import hmac\nimport requests\nimport hashlib\nimport json\nfrom datetime import datetime, timezone\n\naccesskey = 'QY4Tuiug6XidAKjDS5zTQHGSI'\naccess_secret = '62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR'\n\ndate: str = str(int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp()))\ndata: str = json.dumps({\n  'data': [\n    {\n      'coefont': '2b174967-1a8a-42e4-b1ae-5f6548cfa05d',\n      'text': 'これはテストです。'\n    },\n    {\n      'coefont': '46a81787-af54-4a91-8c5b-3b597066294e',\n      'text': 'これはテストです。'\n    }\n  ]\n})\nsignature = hmac.new(bytes(access_secret, 'utf-8'), (date+data).encode('utf-8'), hashlib.sha256).hexdigest()\n\nresponse = requests.post('https://api.coefont.cloud/v1/text2speech/batch', data=data, headers={\n  'Content-Type': 'application/json',\n  'Authorization': accesskey,\n  'X-Coefont-Date': date,\n  'X-Coefont-Content': signature\n})\n\nif response.status_code == 200:\n  with open('response.wav', 'wb') as f:\n    f.write(response.content)\nelse:\n  print(response.json())\n"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "合成された音声ファイルへリダイレクトされます。リダイレクト先でバイナリ化した音声ファイルが返却されます。リダイレクトURLの期限は7日間です。",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "object",
+                  "example": null
+                },
+                "description": "生成された音声ファイルのURL"
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストの形式が違う、または禁止ワードが含まれています。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ヘッダー情報が間違っている，ポイント残高が不足しているなどの理由で認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "コエフォントへのアクセス権が存在しません。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "指定したコエフォントが存在しません。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "声の生成に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dict": {
+      "get": {
+        "tags": [
+          "Dict"
+        ],
+        "summary": "GET /dict",
+        "description": "ユーザー辞書の一覧を取得します",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Content-Type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "アクセスキー",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Date",
+            "in": "header",
+            "description": "UNIX時間(UTC)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Content",
+            "in": "header",
+            "description": "アクセスシークレットを用いて署名した文字列",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "カテゴリー",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ユーザー辞書の一覧を返します",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDictionary"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストの形式が違います",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Dict"
+        ],
+        "summary": "POST /dict",
+        "description": "ユーザ辞書のアイテムを追加します。単語とカテゴリーが重複している場合は上書きされます。",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Content-Type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "アクセスキー",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Date",
+            "in": "header",
+            "description": "UNIX時間(UTC)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Content",
+            "in": "header",
+            "description": "アクセスシークレットを用いて署名した文字列",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "ユーザー辞書のアイテム",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserDictionary"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "登録に成功しました"
+          },
+          "400": {
+            "description": "リクエストの形式が違います",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Dict"
+        ],
+        "summary": "DELETE /dict",
+        "description": "ユーザー辞書のアイテムを削除します",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Content-Type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "アクセスキー",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Date",
+            "in": "header",
+            "description": "UNIX時間(UTC)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Content",
+            "in": "header",
+            "description": "アクセスシークレットを用いて署名した文字列",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "辞書の単語とカテゴリーのオブジェクト",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "text",
+                    "category"
+                  ],
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "辞書に登録する単語",
+                      "minLength": 1,
+                      "maxLength": 100,
+                      "example": "ユーザー辞書"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "カテゴリー",
+                      "minLength": 1,
+                      "example": "カテゴリー"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "削除に成功しました"
+          },
+          "400": {
+            "description": "リクエストの形式が違います",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/coefonts/enterprise": {
+      "get": {
+        "tags": [
+          "Enterprise"
+        ],
+        "summary": "GET /coefonts/enterprise",
+        "description": "エンターブライズ契約で使用できるCoefontの一覧を返します。",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "Content-Type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "アクセスキー",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Date",
+            "in": "header",
+            "description": "UNIX時間(UTC)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Coefont-Content",
+            "in": "header",
+            "description": "アクセスシークレットを用いて署名した文字列",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "python",
+            "source": "import hashlib\nimport hmac\nfrom datetime import datetime, timezone\n\nimport requests\n\naccesskey = 'QY4Tuiug6XidAKjDS5zTQHGSI'\naccess_secret = '62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR'\n\ndate: str = str(int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp()))\nsignature = hmac.new(bytes(access_secret, 'utf-8'), date.encode('utf-8'), hashlib.sha256).hexdigest()\n\nurl = 'https://api.coefont.cloud/v1/coefonts/enterprise'\n\nresponse = requests.get(url, headers={\n    'Content-Type': 'application/json',\n    'Authorization': accesskey,\n    'X-Coefont-Date': date,\n    'X-Coefont-Content': signature\n})\n\nprint(response.status_code, response.json())\n"
+          },
+          {
+            "lang": "nodejs",
+            "source": "const axios = require('axios')\nconst crypto = require('crypto')\n\nconst accessKey = 'QY4Tuiug6XidAKjDS5zTQHGSI'\nconst accessSecret = '62A03zCgPflc3NZwFHliphpKFt4tppOpdmUHgqPR'\nconst date = String(Math.floor(Date.now() / 1000))\nconst signature = crypto.createHmac('sha256', accessSecret).update(date).digest('hex')\n\naxios.get('https://api.coefont.cloud/v1/coefonts/enterprise', {\n    headers: {\n      'Content-Type': 'application/json',\n      'Authorization': accessKey,\n      'X-Coefont-Date': date,\n      'X-Coefont-Content': signature\n    }\n  })\n  .then(response => {\n    console.log(response.data)\n  })\n  .catch(error => {\n    console.log(error)\n  })\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "利用可能なCoefontの一覧を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Coefont"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "認証に失敗しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "エンタープライズ契約期間外です。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Sample": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "サンプル音声ファイルのURL",
+            "example": "https://coefont-cloud...&Expires=1630036711"
+          }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "error message"
+          }
+        }
+      },
+      "Coefont": {
+        "type": "object",
+        "required": [
+          "coefont",
+          "name",
+          "description",
+          "icon",
+          "sample"
+        ],
+        "properties": {
+          "coefont": {
+            "type": "string",
+            "description": "CoeFontのID",
+            "example": "1f58f1ae-2e9c-443a-9e3c-60d8e5dee3b8"
+          },
+          "name": {
+            "type": "string",
+            "description": "CoeFontの名前",
+            "example": "アベルーニ"
+          },
+          "description": {
+            "type": "string",
+            "description": "CoeFontの説明",
+            "example": "あなたに最高のコエをお届けするCoeFont。\\n感情豊かで、落ち着いたコエを持つ。\\n\\n喜: https://coefont.cloud/coefonts/Averuni_happy\\n怒: https://coefont.cloud/coefonts/Averuni_angry\\n哀: https://coefont.cloud/coefonts/Averuni_sorrow\\n楽: https://coefont.cloud/coefonts/Averuni_joy\\n\\nイラスト /  凪白みと\\nYellston: https://www.yellston.com/"
+          },
+          "icon": {
+            "type": "string",
+            "description": "CoeFontのアイコンの画像URL",
+            "example": "https://coefont-cloud-backend-production-public-bucket.s3.ap-northeast-1.amazonaws.com/icon/1f58f1ae-2e9c-443a-9e3c-60d8e5dee3b8.jpeg"
+          },
+          "sample": {
+            "type": "array",
+            "description": "CoeFontのサンプル音声一覧",
+            "items": {
+              "$ref": "#/components/schemas/Sample"
+            }
+          }
+        }
+      },
+      "PostText2SpeechBatchRequest": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "description": "音声変換するテキストとCoeFontを指定した配列",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/PostText2SpeechRequest"
+            }
+          },
+          "format": {
+            "type": "string",
+            "description": "音声ファイルのフォーマット",
+            "enum": [
+              "wav",
+              "mp3"
+            ],
+            "example": "wav"
+          }
+        }
+      },
+      "PostText2SpeechRequest": {
+        "type": "object",
+        "required": [
+          "coefont",
+          "text"
+        ],
+        "properties": {
+          "coefont": {
+            "type": "string",
+            "description": "音声変換を行うcoefontのID。coefont詳細画面のurlに表示される個別のuuidを参照。",
+            "example": "1f58f1ae-2e9c-443a-9e3c-60d8e5dee3b8"
+          },
+          "text": {
+            "type": "string",
+            "description": "音声変換するテキスト",
+            "minLength": 1,
+            "maxLength": 1000,
+            "example": "これはテストです"
+          },
+          "speed": {
+            "type": "number",
+            "format": "float",
+            "description": "音声の速度。1.0で通常速度。0.5で半速。2.0で2倍速。",
+            "maximum": 10,
+            "minimum": 0.1,
+            "default": 1
+          },
+          "pitch": {
+            "type": "number",
+            "format": "float",
+            "description": "音声のピッチ。±1200で1オクターブ変化。",
+            "maximum": 3000,
+            "minimum": -3000,
+            "default": 0
+          },
+          "kuten": {
+            "type": "number",
+            "format": "float",
+            "description": "句点の間隔(秒)",
+            "maximum": 5,
+            "minimum": 0,
+            "default": 0.7
+          },
+          "toten": {
+            "type": "number",
+            "format": "float",
+            "description": "読点の間隔(秒)",
+            "maximum": 2,
+            "minimum": 0.2,
+            "default": 0.4
+          },
+          "volume": {
+            "type": "number",
+            "format": "float",
+            "description": "音量(倍)",
+            "maximum": 2,
+            "minimum": 0.2,
+            "default": 1
+          },
+          "intonation": {
+            "type": "number",
+            "format": "float",
+            "description": "抑揚",
+            "maximum": 2,
+            "minimum": 0,
+            "default": 1
+          }
+        }
+      },
+      "UserDictionary": {
+        "type": "object",
+        "required": [
+          "text",
+          "category",
+          "yomi"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "辞書に登録する単語",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "ユーザー辞書"
+          },
+          "category": {
+            "type": "string",
+            "description": "カテゴリー",
+            "minLength": 1,
+            "example": "カテゴリー"
+          },
+          "yomi": {
+            "type": "string",
+            "description": "読み(ひらがな または カタカナ)",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "ゆーざーじしょ"
+          },
+          "accent": {
+            "type": "string",
+            "description": "アクセント。1と2からなる文字列で、1が低い音、2が高い音になる。読み(yomi)の文字1つずつと前方から対応関係にあり、文字列の長さは同じになる。",
+            "minLength": 1,
+            "example": "1222212"
+          }
+        }
+      }
+    }
+  }
+}
