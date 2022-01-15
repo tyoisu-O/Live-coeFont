@@ -10,6 +10,8 @@ import tempfile
 from datetime import datetime, timezone
 import settings
 
+import scraping
+
  
 access_key = settings.access_key
 access_secret = settings.access_secret
@@ -24,7 +26,7 @@ def text2speech(text, speed, pitch, mode):
     date = str(int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp()))
     # リクエストボディ
     data = json.dumps({
-        'coefont': '5af5520c-e976-43fe-9fa5-ed37ffd781f3',
+        'coefont': 'c28adf78-d67d-4588-a9a5-970a76ca6b07',
         'text': text,
         'speed': speed,
         'pitch': pitch
@@ -72,5 +74,7 @@ if __name__ == '__main__':
     if not access_secret:
         print('環境変数[coefont_access_secret]にシークレットを設定してください。')
         sys.exit(1)
+
+    text = scraping.scr()
     
-    text2speech('テスト', 0.8, 0, 'play')
+    text2speech(text, 0.8, 0, 'play')
