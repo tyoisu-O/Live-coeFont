@@ -9,8 +9,10 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 import settings
+import re
 
 import scraping
+import weather
 
  
 access_key = settings.access_key
@@ -26,7 +28,7 @@ def text2speech(text, speed, pitch, mode):
     date = str(int(datetime.utcnow().replace(tzinfo=timezone.utc).timestamp()))
     # リクエストボディ
     data = json.dumps({
-        'coefont': 'c28adf78-d67d-4588-a9a5-970a76ca6b07',
+        'coefont': 'b6895198-c66e-46d4-b4e6-b5234681f2ed',
         'text': text,
         'speed': speed,
         'pitch': pitch
@@ -48,7 +50,7 @@ def text2speech(text, speed, pitch, mode):
         if mode == 'play':
             with tempfile.TemporaryDirectory() as tmp:
                 save(tmp, response.content)
-                wav_obj = simpleaudio.WaveObject.from_wave_file(f'{tmp}/audio.wav')
+                wav_obj = simpleaudio.WaveObject.from_wave_file(f'{tmp}/read_file/read.wav')
                 play_obj = wav_obj.play()
                 play_obj.wait_done()
         # ファイル出力
@@ -62,7 +64,7 @@ def text2speech(text, speed, pitch, mode):
  
 # APIの結果(音声ファイルのバイナリ)をファイルに出力
 def save(path, content):
-    with open(f'{path}/audio.wav', 'wb') as f:
+    with open(f'{path}/read_file/read.wav', 'wb') as f:
         f.write(content)
  
  
@@ -75,6 +77,9 @@ if __name__ == '__main__':
         print('環境変数[coefont_access_secret]にシークレットを設定してください。')
         sys.exit(1)
 
-    text = scraping.scr()
+    # text = scraping.scr()
+    text = weather.read()
+    text = re.sub('後', 'のち', text)
+    # print(text)
     
-    text2speech(text, 0.8, 0, 'play')
+    text2speech(text, 0.8, 0, 'save')

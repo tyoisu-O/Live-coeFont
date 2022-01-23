@@ -828,52 +828,74 @@ $(function()
                 "SNOW AND THUNDER"
             ]
         };
-    
-        $.getJSON("http://xs286880.xsrv.jp/matsudo_kashiwa/weather.php", function(data){
-        // 天気情報の処理
+        var cities_name = ['釧路', '札幌', '秋田', '仙台', '新潟', '東京', '名古屋', '大阪', '広島', '高知', '福岡', '那覇'];
+
         var num = 1;
-            Object.keys(data).forEach(function (key) {
+        weathers_text = [];
+        $.getJSON("http://xs286880.xsrv.jp/LiveCoeFont/weather.php", function(data){
+
+            var city_weather_codes = data['weather_codes'];
+            // 天気情報の処理
+            city_weather_codes.forEach(function(codes) {
+                // console.log(codes[0]);
+                /* 
+                
                 // console.log(key + "は" + data[key] + "です");
                 // 日付格納
                 var p_id = '#date' + String(num);
                 $(p_id).text(key + '　|　' + weatherCode[String(data[key])][3]);
     
-                
+                */
                 // 天気判断
-                var weather = data[key];
-                if (Number(weather) >= 400) {
+                // var weather = data[key];
+                if (Number(codes[0]) >= 400) {
                     var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/yuki.png";
     
-                }else if (Number(weather) == 350) {
+                }else if (Number(codes[0]) == 350) {
                     var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/kaminari.png";
     
-                }else if (Number(weather) >= 300) {
-                    if (Number(weather) == 301 || Number(weather) == 302) {
+                }else if (Number(codes[0]) >= 300) {
+                    if (Number(codes[0]) == 301 || Number(codes[0]) == 302) {
                         var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/kumoame.png";
                     } else {
                         var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/ame.png";
                     }
-                }else if (Number(weather) >= 200) {
-                    if (Number(weather) == 201) {
+                }else if (Number(codes[0]) >= 200) {
+                    if (Number(codes[0]) == 201) {
                         var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/harekumo.png";
                     } else {
                         var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/kumori.png";
                     }
-                }else if (Number(weather) >= 100) {
+                }else if (Number(codes[0]) >= 100) {
                     var weather_img = "http://xs286880.xsrv.jp/LiveCoeFont/img/hare.png";
     
                 }
-    
+                
                 // 天気情報格納
                 var img_id = '#weather' + String(num);
                 $(img_id).attr('src', weather_img);
     
                 num++;
+
+                // 天気テキスト
+                weathers_text.push(weatherCode[String(codes[0])][3]);
+
+
+                // 気温の処理
+                var city_temps = data['temps'];
+                if (city_temps[0][0] !== '-') { //今日の気温が存在するか
+                    var temp_num = 0;
+                } else {
+                    var temp_num = 2; //今日の気温はないので明日の気温へ
+                }
+
+
+
+                
             });
         });
-
         // 天気情報更新日時
-
+        /*
         var nowTimed = new Date(); //  現在日時を得る
         var nowHourd = nowTimed.getHours(); // 時を抜き出す
         if (nowHourd >= 5 && nowHourd < 11) {
@@ -883,12 +905,15 @@ $(function()
         } else {
             nowHourd = 17;
         }
-        $('#weather').text("天気　|　" + nowHourd + "時00分　更新");
+        */
+        // 日付取得
+        // var weather_day = data['weather_codes'];
+        // $('#weather').text("天気　|　" + nowHourd + "時00分　更新");
 
 });  
 
-// jsの更新(10分)
-const timer = 600000    // ミリ秒で間隔の時間を指定
+// jsの更新(1時間)
+const timer = 3600000    // ミリ秒で間隔の時間を指定
 window.addEventListener('load',function(){
   setInterval('location.reload()',timer);
 });

@@ -1,0 +1,146 @@
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+}
+
+h1,h2,h3 {
+    margin: 0;
+}
+
+#frame {
+    border-collapse: collapse ;
+    width: 100%;
+}
+
+td#OBS_flame {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+/* アニメーションの設定 */
+#top_flame_div, #weather_flame_div {
+    transition: opacity 2s; /* opacity要素(不透明度)の変更を2秒間かけて行う */
+  }
+
+/* -------------------------- ↓topページのcss -------------------------- */
+#top_flame_div {
+    opacity: 0;
+    padding-bottom: 56.25%;
+    background: #FFFFFF;
+    border: 1px solid #797979;
+    position: relative;
+}
+
+#title_div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+}
+
+#title {
+    text-align: center;
+    font-size: 80px;
+}
+
+/* -------------------------- ↑topページのcss -------------------------- */
+
+/* -------------------------- ↓weatherページのcss -------------------------- */
+
+#weather_flame_div {
+    opacity: 0;
+    position: relative;
+    padding-bottom: 56.25%;
+    background: #FFFFFF;
+    border: 1px solid #71d0ed;
+}
+
+#weather_title_div {
+    position: absolute;
+    margin-left: 10px;
+}
+
+#weather_title {
+    text-align: left;
+    font-size: 50px;
+}
+
+#weather_content_div {
+    width: 100%;
+    height: 85%;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateY(-100%) translateX(-50%);
+}
+
+#japan_back_div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-80%);
+}
+
+#japan_img {
+    width: 160%;
+}
+
+.city {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+}
+
+#city1_div {
+    transform: translateY(-50%) translateX(45%);
+}
+#city2_div {
+    transform: translateY(-142%) translateX(15%);
+}
+#city3_div {
+    transform: translateY(0%) translateX(3%);
+}
+#city4_div {
+    transform: translateY(70%) translateX(27%);
+}
+#city5_div {
+    transform: translateY(80%) translateX(-10%);
+}
+#city6_div {
+    transform: translateY(210%) translateX(20%);
+}
+#city7_div {
+    transform: translateY(240%) translateX(1%);
+}
+#city8_div {
+    transform: translateY(225%) translateX(-18%);
+}
+#city9_div {
+    transform: translateY(127%) translateX(-36%);
+}
+#city10_div {
+    transform: translateY(260%) translateX(-37%);
+}
+#city11_div {
+    transform: translateY(170%) translateX(-60%);
+}
+#city12_div {
+    transform: translateY(300%) translateX(-74%);
+}
+
+.city_title {
+    position: absolute;
+    background: #e4e4e4;
+}
+
+.weather_img {
+    margin-top: 5%;
+    width: 17%;
+}
+
+/* -------------------------- ↑weatherページのcss -------------------------- */
