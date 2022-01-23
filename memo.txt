@@ -2,17 +2,19 @@
 pip3 install requests --user
 pip3 install python-dotenv --user .env系
 pip install beautifulsoup4 --user
-pip install lxml --user
 
 ■注意
-インデント気をつける
+pythonはインデント気をつける
+soundはchromeにて[xs286880.xsrv.jp]を許可する
 
 ■良さそうなボイス
 ミリアル
-https://coefont.cloud/coefonts/c28adf78-d67d-4588-a9a5-970a76ca6b07
+https://coefont.cloud/coefonts/c28adf78-d67d-4588-a9a5-970a76ca6b07 ☆
 村田川こまち type-B
-https://coefont.cloud/coefonts/10a6165d-d551-40fd-ac1b-29f885d4607a
+https://coefont.cloud/coefonts/10a6165d-d551-40fd-ac1b-29f885d4607a ☆☆
 あみたろ・淡々(小春音アミ)
-https://coefont.cloud/coefonts/6962df76-d625-4be1-9c29-e4b3a6af6779
+https://coefont.cloud/coefonts/6962df76-d625-4be1-9c29-e4b3a6af6779 ☆☆☆
+林アナ(聞き取りやすい)
+https://coefont.cloud/coefonts/b6895198-c66e-46d4-b4e6-b5234681f2ed ☆☆☆☆☆
 あさのゆき（ナレーター・アナウンサー）※[注意]10p
-https://coefont.cloud/coefonts/30f57cf2-e73f-456b-8e0c-ca87cbbe4361
+https://coefont.cloud/coefonts/30f57cf2-e73f-456b-8e0c-ca87cbbe4361 ☆☆☆☆☆
