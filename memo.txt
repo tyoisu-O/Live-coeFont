@@ -1,11 +1,14 @@
 ■コマンド実行系
 pip3 install requests --user
 pip3 install python-dotenv --user .env系
-pip install beautifulsoup4 --user
+pip3 install beautifulsoup4 --user
+pip3 install schedule -user 定期実行
 
 ■注意
 pythonはインデント気をつける
 soundはchromeにて[xs286880.xsrv.jp]を許可する
+
+auto.pyは[control]+[Z]で抜け出せる
 
 ■良さそうなボイス
 ミリアル
