@@ -11,7 +11,6 @@ from datetime import datetime, timezone
 import settings
 import re
 
-import scraping
 import weather
 
  
@@ -29,7 +28,7 @@ def text2speech(text, speed, pitch, mode):
     # リクエストボディ
     data = json.dumps({
         'coefont': 'b6895198-c66e-46d4-b4e6-b5234681f2ed',
-        'text': text,
+        'text': '',
         'speed': speed,
         'pitch': pitch
     })
@@ -80,6 +79,5 @@ if __name__ == '__main__':
     # text = scraping.scr()
     text = weather.read()
     text = re.sub('後', 'のち', text)
-    # print(text)
     
     text2speech(text, 0.8, 0, 'save')
