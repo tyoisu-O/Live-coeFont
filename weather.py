@@ -30,7 +30,7 @@ def read():
     read_text = weather_days[0] + 'の天気です。'
     num = 0
     for code in city_weather_code:
-        read_text = read_text + cities_name[num] + '、'
+        read_text = read_text + cities_name[num]
         read_text = read_text + weatherCode[str(code)][3] + '。'
         num = num + 1
     read_text = re.sub('後', 'のち', read_text)

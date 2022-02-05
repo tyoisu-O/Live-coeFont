@@ -5,6 +5,7 @@ html {
 body {
     height: 100%;
     margin: 0;
+    background: #000000;
 }
 
 h1,h2,h3 {
@@ -23,7 +24,7 @@ td#OBS_flame {
 }
 
 /* アニメーションの設定 */
-#top_flame_div, #weather_flame_div {
+#top_flame_div, #weather_flame_div, #video_flame_div, #movie_div, #iframe_movie_div {
     transition: opacity 2s; /* opacity要素(不透明度)の変更を2秒間かけて行う */
   }
 
@@ -32,7 +33,6 @@ td#OBS_flame {
     opacity: 0;
     padding-bottom: 56.25%;
     background: #FFFFFF;
-    border: 1px solid #797979;
     position: relative;
 }
 
@@ -55,9 +55,8 @@ td#OBS_flame {
 #weather_flame_div {
     opacity: 0;
     position: relative;
-    padding-bottom: 56.25%;
     background: #FFFFFF;
-    border: 1px solid #71d0ed;
+    padding-bottom: 56.25%;
 }
 
 #weather_title_div {
@@ -144,3 +143,22 @@ td#OBS_flame {
 }
 
 /* -------------------------- ↑weatherページのcss -------------------------- */
+
+/* -------------------------- ↓videoページのcss -------------------------- */
+#video_flame_div {
+    opacity: 0;
+    position: relative;
+    padding-bottom: 56.25%;
+}
+
+#movie_div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: 100%;
+    height: 100%;
+}
+
+
+/* -------------------------- ↑videoページのcss -------------------------- */

@@ -883,11 +883,11 @@ function time2(){
     var nowSec  = nowTime.getSeconds(); // 秒を抜き出す
     flag = false;
 
-    if (nowMin % 4 == 1 && nowSec == 0) {
+    if (nowMin % 6 === 1 && nowSec === 0) {
         code_num = 0;
         flag = true;
     }
-    if (nowMin % 4 == 2 && nowSec == 30){
+    if (nowMin % 6 === 2 && nowSec === 0){
         code_num = 1;
         flag = true;
     }
@@ -933,22 +933,14 @@ function time2(){
             // 日付+文字格納
             weather_title = data['weather_days'][code_num].slice(5);
             top_word = weather_title.slice(0,1);
+            day_top = weather_title.slice(3,4);
             if (top_word = String(0)) {
                 weather_title = weather_title.slice(1);
             }
+            if (day_word = String(0)) {
+                weather_title = weather_title.replace(/0/g, '');
+            }
             $('#weather_title').text(weather_title);
-
-            // 天気テキスト
-            // weathers_text.push(weatherCode[String(codes[0])][3]);
-
-
-            // 気温の処理
-            // var city_temps = data['temps'];
-            // if (city_temps[0][0] !== '-') { //今日の気温が存在するか
-            //     var temp_num = 0;
-            // } else {
-            //     var temp_num = 2; //今日の気温はないので明日の気温へ
-            // } 
         });
     } 
 } 
