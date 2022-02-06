@@ -19,7 +19,7 @@ function movie(id, movie_time) {
         console.log('動画初期音声' + vol);
     }
     if (video_num > 2 && video_num <= 7) {
-        vol += 0;
+        vol += 10;
         $(id).YTPSetVolume(vol);
         console.log('音量' + vol);
     }
