@@ -1,3 +1,11 @@
+// 配信スケジュール取得
+var video_sche = [];
+for (key in live_schedule) {
+    if (live_schedule[key] === 'video') {
+        video_sche.push(Number(key));
+    }
+}
+
 function movie(id, movie_time) {
     if (video_num === 0 || first) {
         $(id).YTPlayer(); // 動画の呼び出し部分に指定したID
@@ -6,37 +14,48 @@ function movie(id, movie_time) {
     }
     if (view_count === 3) { // 初回に動画音声がonにならないため特殊処理
         $(id).YTPUnmute();
-        vol = 100;
+        vol = 50;
         $(id).YTPSetVolume(vol);
         console.log('動画初期音声' + vol);
     }
     if (video_num > 2 && video_num <= 7) {
-        vol += 20;
+        vol += 10;
         $(id).YTPSetVolume(vol);
         console.log('音量' + vol);
     }
-    if (video_num > movie_time - 10 && video_num <= movie_time - 1) { // 敢えて9回処理
-        vol -= 10;
+    if (video_num > movie_time - 11 && video_num <= movie_time - 1) {
+        vol -= 5;
         $(id).YTPSetVolume(vol);
         console.log('音量' + vol);
     }    
 }
 
-var view_count = 0;
 vol = 0;
 first = false;
 movie_num = 0;
 // 動画コンテンツの要素定義
-movie_id = ['UTnE0qQ41eE', 'viNt9VTIXu0', 'ad_OTL0ZgCw'];
+movie_id = ['UTnE0qQ41eE','cST4RO2sKsc', 'viNt9VTIXu0', 'SMqAIgL9J8o', 'ad_OTL0ZgCw', 'VGAyK4nZEkY'];
 
-$(function() {   
+movie_dom = '#video_flame_div';
+
+$(function() {
+    for (key in video_sche) {
+        if (shakued_time === video_sche[key]) {
+            $(movie_dom).css('opacity', 1);
+            $('#top_flame_div').css('display', 'none');
+            $('#weather_flame_div').css('display', 'none');
+            $(movie_dom).css('display', 'block');
+            bgm.pause();
+            bgm2.pause();
+        }
+    }
+
     var nowTime = new Date(); //  現在日時を得る
-    var nowHour = nowTime.getHours(); // 時を抜き出す
     var nowMin  = nowTime.getMinutes(); // 分を抜き出す
     var nowSec  = nowTime.getSeconds(); // 秒を抜き出す 
     var property = {
         videoURL: movie_id[movie_num],
-        containment: '#video_flame_div',
+        containment: movie_dom,
         loop: false,
         vol: 0,
         mute: true,
@@ -49,25 +68,19 @@ $(function() {
     // 動画DOM追加
     $('#movie_div').attr('data-property', JSON.stringify(property));
     first = true;
-    if (nowMin % 6 == 4 || nowMin % 6 == 5) {
-        video_num = (nowMin % 6 - 4) * 60 + nowSec;
-        movie("#movie_div", 120);
-    }
+    for (key in video_sche) {
+        if (shakued_time === video_sche[key]) {
+            video_num = (shakued_time - video_sche[0]) * 60 + nowSec;
+            movie("#movie_div", 120);
+        }
+    }    
     first = false;
-
-    // 1秒毎に更新
-    setInterval("time3()", 1000);
 });
 
+function video() {
 
-function time3() {
-    var nowTime = new Date(); //  現在日時を得る
-    var nowHour = nowTime.getHours(); // 時を抜き出す
-    var nowMin  = nowTime.getMinutes(); // 分を抜き出す
-    var nowSec  = nowTime.getSeconds(); // 秒を抜き出す
-    view_count += 1;
-
-    if (nowMin % 6 == 0 && nowSec == 1) {
+    // 動画の変更処理
+    if (shakued_time === video_sche[1] && nowSec === 59) {
         movie_num += 1;
         if (movie_num >= movie_id.length) {
             movie_num = 0;
@@ -76,7 +89,7 @@ function time3() {
 
     var property = {
         videoURL: movie_id[movie_num],
-        containment: '#video_flame_div',
+        containment: movie_dom,
         loop: false,
         vol: 0,
         mute: true,
@@ -87,26 +100,40 @@ function time3() {
         showYTLogo: false,
     }
 
-    if (nowMin % 6 == 0 && nowSec == 1) {
+    if (shakued_time === video_sche[1] && nowSec === 59) {
         console.log('動画初期化');
-        $('#video_flame_div').empty();
+        $(movie_dom).empty();
         // 動画のDOMを一度削除して、再度生成
-        $('#video_flame_div').html('<div id="movie_div"></div>');
+        $(movie_dom).html('<div id="movie_div"></div>');
         $('#movie_div').attr('data-property', JSON.stringify(property));
 
         // volが10で終わるので、次に向けて初期化
         vol = 0;
     }
 
-    if (nowMin % 6 == 4 || nowMin % 6 == 5) {
-        // 動画尺の中での経過時間(最大値119)
-        video_num = (nowMin % 6 - 4) * 60 + nowSec;
+    for (key in video_sche) {
+        if (shakued_time === video_sche[key]) {
+            // 動画尺の中での経過時間(最大値119)
+            video_num = (shakued_time - video_sche[0]) * 60 + nowSec;
 
-        movie("#movie_div", 120);
+            movie("#movie_div", 120);
 
-        // デフォだと動画が大きく表示されてしまうため、CSS修正
-        $('#iframe_movie_div').css({'width': '100%', 'height': '100%', 'margin-top': '0px', 'margin-left': '0px'});
-    } else {
-        video_num = 0;
+            // デフォだと動画が大きく表示されてしまうため、CSS修正
+            $('#iframe_movie_div').css({'width': '100%', 'height': '100%', 'margin-top': '0px', 'margin-left': '0px'});
+        }
+    }
+
+    // 動画コンテンツ初回フレーム
+    if (video_sche[0] && nowSec === 0) {
+        $('#top_flame_div').css('display', 'none');
+        $('#weather_flame_div').css('display', 'none');
+        $('#video_flame_div').css('display', 'block');
+        bgm.pause();
+        bgm2.pause();
+    } else if (video_sche[0] && nowSec === 3) {
+        // css変更処理が走るため、遅延で処理(3)
+        $('#video_flame_div').css('opacity', 1);
+    } else if (video_sche[1] && nowSec === 58) {
+        $('#video_flame_div').css('opacity', 0);
     }
 }
