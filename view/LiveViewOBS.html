@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mb.YTPlayer/3.3.9/jquery.mb.YTPlayer.min.js" integrity="sha512-rVFx7vXgVV8cmgG7RsZNQ68CNBZ7GL3xTYl6GAVgl3iQiSwtuDjTeE1GESgPSCwkEn/ijFJyslZ1uzbN3smwYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="http://xs286880.xsrv.jp/LiveCoeFont/basic.js"></script>
+    <script src="http://xs286880.xsrv.jp/LiveCoeFont/title.js"></script>
+    <script src="http://xs286880.xsrv.jp/LiveCoeFont/weather.js"></script>
+    <script src="http://xs286880.xsrv.jp/LiveCoeFont/video.js"></script>
+    <!-- <script src="http://xs286880.xsrv.jp/LiveCoeFont/train.js"></script> -->
+    <link rel="stylesheet" href="viewOBS.css">
+    <title>配信画面</title>
+</head>
+<body>
+    <audio id="bgm" src="http://xs286880.xsrv.jp/LiveCoeFont/sound/%E5%BF%83%E3%81%AE%E4%B8%AD%E3%81%AE%E5%B0%8F%E3%81%95%E3%81%AA%E5%AE%87%E5%AE%99.mp3"></audio>
+    <audio id="bgm2" src="http://xs286880.xsrv.jp/LiveCoeFont/sound/top.mp3"></audio>
+    <table id="frame">
+        <tr>
+            <td id="OBS_flame">
+                <div id="top_flame_div">
+                    <div id="title_div">
+                        <h1 id="title">ニュースLive</h1>
+                    </div>
+                    
+                </div>
+                <div id="weather_flame_div">
+                    <div id="weather_title_div">
+                        <h2 id="weather_title">天気</h2>
+                    </div>
+                    <div id="japan_back_div">
+                        <img id="japan_img" src="http://xs286880.xsrv.jp/LiveCoeFont/img/japan.svg">
+                    </div>
+                    <div id="weather_content_div">
+                        <div class="city" id="city1_div">
+                            <div class="city_title">
+                                <h3 id="city1">釧路</h3>
+                            </div>
+                            <img id="weather1" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city2_div">
+                            <div class="city_title">
+                                <h3 id="city2">札幌</h3>
+                            </div>
+                            <img id="weather2" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city3_div">
+                            <div class="city_title">
+                                <h3 id="city3">秋田</h3>
+                            </div>
+                            <img id="weather3" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city4_div">
+                            <div class="city_title">
+                                <h3 id="city4">仙台</h3>
+                            </div>
+                            <img id="weather4" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city5_div">
+                            <div class="city_title">
+                                <h3 id="city5">新潟</h3>
+                            </div>
+                            <img id="weather5" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city6_div">
+                            <div class="city_title">
+                                <h3 id="city6">東京</h3>
+                            </div>
+                            <img id="weather6" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city7_div">
+                            <div class="city_title">
+                                <h3 id="city7">名古屋</h3>
+                            </div>
+                            <img id="weather7" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city8_div">
+                            <div class="city_title">
+                                <h3 id="city8">大阪</h3>
+                            </div>
+                            <img id="weather8" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city9_div">
+                            <div class="city_title">
+                                <h3 id="city9">広島</h3>
+                            </div>
+                            <img id="weather9" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city10_div">
+                            <div class="city_title">
+                                <h3 id="city10">高知</h3>
+                            </div>
+                            <img id="weather10" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city11_div">
+                            <div class="city_title">
+                                <h3 id="city11">福岡</h3>
+                            </div>
+                            <img id="weather11" class="weather_img" src="">
+                        </div>
+                        <div class="city" id="city12_div">
+                            <div class="city_title">
+                                <h3 id="city12">那覇</h3>
+                            </div>
+                            <img id="weather12" class="weather_img" src="">
+                        </div>
+                    </div>
+                </div>
+                <div id="video_flame_div">
+                    <div id="movie_div"></div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
